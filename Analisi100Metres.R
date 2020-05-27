@@ -85,5 +85,27 @@ cor.test(a$millora,a$anys,method="spearman")
 millora_plot<- select(a, millora, Marca, marcaAnt, anys)
 plot(millora_plot)
 
+b<-a
+b$millora<-b$millora*2
+b<-b[!is.na(b$Atleta),]
+summary(b)
+shapiro.test(b$Marca)
+shapiro.test(b$millora)
+b<- select(b, millora, Marca, marcaAnt, anys)
+cor(b,method="spearman")
+cor.test(b$millora,b$Marca,method="spearman")
+cor.test(b$millora,b$marcaAnt,method="spearman")
+cor.test(b$millora,b$anys,method="spearman")
+cor.test(b$marcaAnt,b$Marca,method="spearman")
+millora_plot<- select(b, millora, Marca, marcaAnt, anys)
+plot(millora_plot,pch='.')
+plot(millora_plot$anys, millora_plot$millora, pch=4)
+smoothingSpline = smooth.spline(millora_plot$anys, millora_plot$millora, spar=0.7)
+lines(smoothingSpline, col='red', lwd=3)
+
+plot(millora_plot$marcaAnt, millora_plot$millora, pch=4)
+smoothingSpline = smooth.spline(millora_plot$marcaAnt, millora_plot$millora, spar=0.7)
+lines(smoothingSpline, col='red', lwd=3)
+
 
 
