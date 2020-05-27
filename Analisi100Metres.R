@@ -1,4 +1,4 @@
-dades_original <- read.csv('C:/Users/ricar/Desktop/Master/tipologia i cicle de vida de les dades/modul2/resultats_arreglo.csv', header=TRUE, sep=";")
+dades_original <- read.csv('<Ubicacio CSV>/resultats_arreglo.csv', header=TRUE, sep=";")
 library(data.table)
 dades <- dades_original
 colnames(dades)
