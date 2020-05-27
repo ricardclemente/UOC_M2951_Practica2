@@ -86,7 +86,6 @@ millora_plot<- select(a, millora, Marca, marcaAnt, anys)
 plot(millora_plot)
 
 b<-a
-b$millora<-b$millora*2
 b<-b[!is.na(b$Atleta),]
 summary(b)
 shapiro.test(b$Marca)
