@@ -1,4 +1,4 @@
-dades_original <- read.csv('<Ubicacio CSV>/resultats_arreglo.csv', header=TRUE, sep=";")
+dades_original <- read.csv('C:/Users/ricar/Desktop/Master/tipologia i cicle de vida de les dades/modul2/resultats_arreglo.csv', header=TRUE, sep=";")
 library(data.table)
 dades <- dades_original
 colnames(dades)
@@ -7,8 +7,6 @@ dim(dades)
 head(dades,5)
 summary(dades)
 str(dades)
-
-
 
 dades_final<- select(dades, Atleta, Descripcion, Fecha , Marca , F.Nacimiento)
 
@@ -20,7 +18,7 @@ dades_final$Marca<-gsub(" A","",dades_final$Marca)
 dades_final_masc<- filter(dades_final, (Descripcion == '100m MASC. AL'))
 dades_final_masc$anys<- as.integer(format((as.Date(dades_final_masc$F.Nacimiento,"%d/%m/%y")),"%Y"))
 year_marca<-as.integer(format((as.Date(dades_final_masc$Fecha,"%d/%m/%y")),"%Y"))
-  #year_act<-as.integer(format(Sys.Date(),"%Y"))
+
 
 dades_final_masc$anys<- year_marca - dades_final_masc$anys
 masc_ord_atl <- with(dades_final_masc, dades_final_masc[order(Atleta, decreasing=FALSE), ])
@@ -68,19 +66,13 @@ xlab="Edat",
 ylab="millora", col='red'
 )
 
-
 library(rio)
 #export(results_atl_final_m, "./result_final_m.csv")
 write.table(results_atl_final_m, "result_final_m_v1.csv", sep=";", dec=".", col.names=TRUE)
 
 a$Marca<-as.numeric(a$Marca)
-shapiro.test(a$Marca)
 
 a$millora<-as.numeric(a$millora)
-shapiro.test(a$millora)
-
-cor.test(a$millora,a$Marca,method="spearman")
-cor.test(a$millora,a$anys,method="spearman")
 
 millora_plot<- select(a, millora, Marca, marcaAnt, anys)
 plot(millora_plot)
@@ -99,12 +91,40 @@ cor.test(b$marcaAnt,b$Marca,method="spearman")
 millora_plot<- select(b, millora, Marca, marcaAnt, anys)
 plot(millora_plot,pch='.')
 plot(millora_plot$anys, millora_plot$millora, pch=4)
-smoothingSpline = smooth.spline(millora_plot$anys, millora_plot$millora, spar=0.7)
-lines(smoothingSpline, col='red', lwd=3)
+
+
+dades<-b
+#mirem la normalitat
+shapiro.test(dades$millora)
+shapiro.test(dades$anys)
+shapiro.test(dades$marcaAnt)
+summary(dades)
+#mirem la homogeneïtat
+fligner.test(millora ~ anys, data = dades)
+fligner.test(millora ~ marcaAnt, data = dades)
+#tests estadistics
+kruskal.test(millora ~ anys, data = dades)
+kruskal.test(millora ~ marcaAnt, data = dades)
+millora_plot<- select(c, millora, marcaAnt, anys)
+plot(millora_plot,pch='.')
+ml=lm(millora ~ anys, data = dades)
+summary(ml)
+plot(millora ~ anys, data = dades, pch=4)
+abline(ml, col="red", lwd=3)
+ml=lm(millora ~ marcaAnt, data = dades)
+summary(ml)
+plot(millora ~ marcaAnt, data = dades, pch=4)
+abline(ml, col="red", lwd=3)
+ml=lm(formula = millora ~ anys+marcaAnt, data = dades)
+summary(ml)
+
+cor.test(dades$millora,dades$anys, method="spearman")
+cor.test(dades$millora,dades$marcaAnt, method="spearman")
+
 
 plot(millora_plot$marcaAnt, millora_plot$millora, pch=4)
 smoothingSpline = smooth.spline(millora_plot$marcaAnt, millora_plot$millora, spar=0.7)
 lines(smoothingSpline, col='red', lwd=3)
-
+boxplot(b$millora)
 
 
